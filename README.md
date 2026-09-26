@@ -31,46 +31,28 @@ holds flat until Congress changes it (2007, 2008, 2009 here).
 
 ## Data files
 
+Both files are the real downloads, unmodified.
+
 ### `data/FEDMINNFRWG.csv` — federal minimum wage
 
-Source: <https://fred.stlouisfed.org/series/FEDMINNFRWG> ("Federal Minimum
-Hourly Wage for Nonfarm Workers for the United States", monthly, dollars/hour).
+FRED's CSV export of series
+[FEDMINNFRWG](https://fred.stlouisfed.org/series/FEDMINNFRWG) — "Federal
+Minimum Hourly Wage for Nonfarm Workers for the United States", monthly,
+dollars per hour. Two columns, `observation_date,FEDMINNFRWG`, covering
+1938-10 to the present; the script slices out 2000-2020.
 
-**This copy was reconstructed, not downloaded.** `fred.stlouisfed.org` is
-blocked by the network policy of the environment this was built in, so the file
-was rebuilt from the statutory rates the FRED series reports — the Fair Labor
-Standards Act effective dates:
+Within that window the wage moves three times — $5.15 → $5.85 (2007-07) →
+$6.55 (2008-07) → $7.25 (2009-07) — and has not moved since.
 
-| Effective | Rate |
-|---|---|
-| 1997-09-01 | $5.15 |
-| 2007-07-24 | $5.85 |
-| 2008-07-24 | $6.55 |
-| 2009-07-24 | $7.25 |
+### `data/bigmac.csv` — Big Mac price
 
-One row per month, stamped on the first of the month with the rate in effect
-during that month, which is FRED's own layout (`DATE,FEDMINNFRWG`).
-
-To use the real download instead, grab the CSV from the "Download" button on the
-FRED page and overwrite `data/FEDMINNFRWG.csv`. The loader reads FRED's format
-as-is, so no code changes are needed. The values should match.
-
-### `data/big-mac-full-index.csv` — Big Mac price
-
-The assignment points at the Kaggle dataset
-<https://www.kaggle.com/datasets/mrmorj/big-mac-index-data>. Kaggle is also
-blocked by the same network policy, and its download requires an account and an
-API token in any case.
-
-That dataset is a republication of The Economist's own Big Mac Index repository,
-so this copy came from the upstream source directly:
-<https://github.com/TheEconomist/big-mac-data> →
-`output-data/big-mac-full-index.csv`. Same file, same columns
-(`date, iso_a3, name, local_price, dollar_price, ...`).
+The Big Mac Index table from
+<https://www.kaggle.com/datasets/mrmorj/big-mac-index-data>, one row per
+country per survey (`date, iso_a3, name, local_price, dollar_price, ...`).
 
 The script keeps the `iso_a3 == "USA"` rows and reads `local_price`, which for
-the United States is the price in dollars. The Economist surveys roughly twice a
-year, so 2000-2020 gives 33 observations.
+the United States is the price in dollars. The Economist surveys roughly twice
+a year, so 2000-2020 gives 33 observations.
 
 ## Notes on the comparison
 

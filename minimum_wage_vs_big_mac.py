@@ -27,7 +27,7 @@ from matplotlib.ticker import FuncFormatter
 
 DATA_DIR = Path(__file__).parent / "data"
 MINIMUM_WAGE_CSV = DATA_DIR / "FEDMINNFRWG.csv"
-BIG_MAC_CSV = DATA_DIR / "big-mac-full-index.csv"
+BIG_MAC_CSV = DATA_DIR / "bigmac.csv"
 
 CHART_PATH = Path(__file__).parent / "minimum_wage_vs_big_mac.png"
 TABLE_PATH = Path(__file__).parent / "minimum_wage_vs_big_mac.csv"
@@ -54,13 +54,13 @@ GRID = "#e1e0d9"
 def load_minimum_wage(csv_path: Path = MINIMUM_WAGE_CSV) -> pd.Series:
     """Return the monthly federal minimum wage in $/hour, indexed by date.
 
-    Expects FRED's own CSV layout for series FEDMINNFRWG (a ``DATE`` column
-    plus one value column), exactly as downloaded from
-    https://fred.stlouisfed.org/series/FEDMINNFRWG
+    Reads FRED's own CSV export for series FEDMINNFRWG, downloaded from
+    https://fred.stlouisfed.org/series/FEDMINNFRWG. The export is two columns,
+    ``observation_date`` and the series id, and it runs from 1938 to the
+    present, so we slice out the window we care about.
     """
-    frame = pd.read_csv(csv_path, parse_dates=["DATE"])
-    value_column = frame.columns[1]  # FRED names it after the series id
-    wage = frame.set_index("DATE")[value_column].astype(float)
+    frame = pd.read_csv(csv_path, index_col=0, parse_dates=True)
+    wage = frame.iloc[:, 0].astype(float)
     wage.name = "minimum_wage_usd_per_hour"
     return wage.loc[START_DATE:END_DATE].sort_index()
 
@@ -68,9 +68,10 @@ def load_minimum_wage(csv_path: Path = MINIMUM_WAGE_CSV) -> pd.Series:
 def load_big_mac_price(csv_path: Path = BIG_MAC_CSV) -> pd.Series:
     """Return the U.S. Big Mac price in $, indexed by survey date.
 
-    Expects the Big Mac Index table (``big-mac-full-index.csv``) published by
-    The Economist and mirrored on Kaggle. The file covers every surveyed
-    country, so we keep the United States rows and their local price.
+    Reads the Big Mac Index table (``bigmac.csv``) from the Kaggle dataset
+    https://www.kaggle.com/datasets/mrmorj/big-mac-index-data. The file covers
+    every surveyed country, so we keep the United States rows and read
+    ``local_price``, which for the U.S. is already in dollars.
     """
     frame = pd.read_csv(csv_path, parse_dates=["date"])
     united_states = frame.loc[frame["iso_a3"] == "USA"]
@@ -105,11 +106,10 @@ def big_macs_per_hour_worked(wage: pd.Series, price: pd.Series) -> pd.Series:
     The two sources are sampled on different calendars, so each Big Mac survey
     is matched to the minimum wage in effect on or before that date.
     """
+    price_rows = price.rename_axis("date").reset_index()
+    wage_rows = wage.rename_axis("date").reset_index()
     aligned = pd.merge_asof(
-        price.reset_index().rename(columns={"date": "date"}),
-        wage.reset_index().rename(columns={"DATE": "date"}),
-        on="date",
-        direction="backward",
+        price_rows, wage_rows, on="date", direction="backward"
     ).set_index("date")
     ratio = aligned["minimum_wage_usd_per_hour"] / aligned["big_mac_price_usd"]
     ratio.name = "big_macs_per_hour_worked"
