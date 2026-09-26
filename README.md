@@ -1,16 +1,28 @@
 # Federal minimum wage vs. the price of a Big Mac, 2000-2020
 
-`minimum_wage_vs_big_mac.py` charts how fast each of the two figures grew over
-the same 21 years.
+Charts how fast each of the two figures grew over the same 21 years. The same
+analysis is available two ways — a notebook and a plain script:
+
+**Notebook** — `minimum_wage_vs_big_mac.ipynb`, with the narration and the chart
+rendered inline. It is committed with its outputs, so the graph is readable on
+GitHub without running anything.
+
+```
+python -m pip install pandas matplotlib notebook
+jupyter notebook minimum_wage_vs_big_mac.ipynb   # then Run All
+```
+
+**Script** — `minimum_wage_vs_big_mac.py`, the same code as a single file.
 
 ```
 python -m pip install pandas matplotlib
 python minimum_wage_vs_big_mac.py
 ```
 
-It writes `minimum_wage_vs_big_mac.png` (the chart) and
+Either one writes `minimum_wage_vs_big_mac.png` (the chart) and
 `minimum_wage_vs_big_mac.csv` (every plotted value, so the numbers are readable
-without the picture).
+without the picture); the two produce byte-identical output. The notebook reads
+`data/` relative to its own folder, so run it from the repository root.
 
 ## What it shows
 
