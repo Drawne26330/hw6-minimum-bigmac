@@ -10,3 +10,10 @@ Issues for future reference:
   - I gave it the files from a download, but it remarked that the data was the same for both of them.   
 - Git was not connected initially, doublecheck each time if git is connected  
 - .py (python) and .ipynb (python notebook) are not directly compatible. Ask Claude to convert if python was specified.
+
+Notes for assignment:
+
+- The Big Mac index was missing values from before 2000 and after 2020, so the data range was changed to those values.  
+- Did not mention which charts should be used, but Claude chose line charts for both of them.  
+- I did not have explicitly defined expectations for the results, but due to prior knowledge I would have said that I expected the minimum wage to lag behind the big mac index further as time went on.  
+- Claude did not generate a .env file. I discussed this with the teacher on tuesday; I don’t need to worry about the .gitignore if the .env file doesn’t exist.
